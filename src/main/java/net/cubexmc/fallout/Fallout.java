@@ -73,14 +73,13 @@ public class Fallout extends JavaPlugin {
             if (lbl.equalsIgnoreCase("pip")) {
                 p.getInventory().setItem(0, getPip());
                 p.openInventory(Fallout.getInstance().getGui().openStatus(p));
-            } else if (lbl.equalsIgnoreCase("handbook")) {
-                if (args.length == 0) {
-                    p.getInventory().addItem(getBook());
-                } else {
-                    if (Bukkit.getPlayer(args[0]) != null) {
-                        Bukkit.getPlayer(args[0]).getInventory().addItem(getBook());
-                    }
-                }
+            }
+        }
+        if (lbl.equalsIgnoreCase("handbook")) {
+            if (args.length == 0 && se instanceof Player) {
+                ((Player) se).getInventory().addItem(getBook());
+            } else if (args.length == 1 && Bukkit.getPlayer(args[0]) != null) {
+                Bukkit.getPlayer(args[0]).getInventory().addItem(getBook());
             }
         }
         return false;
