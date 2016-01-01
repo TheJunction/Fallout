@@ -534,12 +534,12 @@ public class Listeners implements Listener {
     @EventHandler
     public void pack(final PlayerResourcePackStatusEvent e) {
         if (e.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
-            Bukkit.getScheduler().runTask(Fallout.getInstance(), new Runnable() {
+            Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), new Runnable() {
                 @Override
                 public void run() {
                     e.getPlayer().kickPlayer(ChatColor.RED + "You must accept the resource pack to play!\nTry setting server resource packs to \"Enabled\"\nby editing the server on the multiplayer menu.");
                 }
-            });
+            }, 20);
         }
     }
 
