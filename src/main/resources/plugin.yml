@@ -1,0 +1,9 @@
+main: net.cubexmc.fallout.Fallout
+name: Fallout
+depend: [Factions, Essentials]
+author: PantherMan594
+version: #VERSION#
+
+commands:
+  pip:
+  handbook:
