@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 David Shen. All Rights Reserved.
+ * Copyright (c) 2016 CubeXMC. All Rights Reserved.
  * Created by PantherMan594.
  */
 
@@ -32,6 +32,10 @@ public class Fallout extends JavaPlugin {
     private Gui gui;
     private List<String> identifier;
     private ItemStack pip;
+
+    public static Fallout getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -130,10 +134,6 @@ public class Fallout extends JavaPlugin {
 
     public List<String> getIdentifier() {
         return identifier;
-    }
-
-    public static Fallout getInstance() {
-        return instance;
     }
 
     public ItemStack getPip() {

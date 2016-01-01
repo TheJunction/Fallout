@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 David Shen. All Rights Reserved.
+ * Copyright (c) 2016 CubeXMC. All Rights Reserved.
  * Created by PantherMan594.
  */
 
@@ -14,7 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
@@ -174,7 +177,7 @@ public class Listeners implements Listener {
                             FakeAnvil fakeAnvil = new FakeAnvil(entityPlayer);
                             int containerId = entityPlayer.nextContainerCounter();
 
-                            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutOpenWindow(containerId, "minecraft:anvil", new ChatMessage("Repairing", new Object[]{}), 0));
+                            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutOpenWindow(containerId, "minecraft:anvil", new ChatMessage("Repairing"), 0));
 
                             entityPlayer.activeContainer = fakeAnvil;
                             entityPlayer.activeContainer.windowId = containerId;
