@@ -534,7 +534,7 @@ public class Listeners implements Listener {
             Bukkit.getScheduler().runTask(Fallout.getInstance(), new Runnable() {
                 @Override
                 public void run() {
-                    e.getPlayer().kickPlayer(ChatColor.RED + "You must accept the resource pack to play!");
+                    e.getPlayer().kickPlayer(ChatColor.RED + "You must accept the resource pack to play!\nTry setting server resource packs to \"Enabled\"\nby editing the server on the multiplayer menu.");
                 }
             });
         }
