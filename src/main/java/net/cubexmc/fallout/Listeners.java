@@ -453,11 +453,14 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void drink(PlayerItemConsumeEvent e) {
+    public void eat(PlayerItemConsumeEvent e) {
         final UUID uuid = e.getPlayer().getUniqueId();
         if (e.getItem().getType() == Material.MILK_BUCKET) {
             Fallout.getInstance().getStats().setRadResist(uuid, false);
             Fallout.getInstance().getStats().setStrResist(uuid, false);
+        }
+        if (e.getItem().getType().name().toLowerCase().startsWith("raw ") || (e.getItem().getItemMeta() != null && e.getItem().getItemMeta().getDisplayName() != null && e.getItem().getItemMeta().getDisplayName().toLowerCase().startsWith("raw "))) {
+            Fallout.getInstance().getStats().setRadLevel(uuid, Fallout.getInstance().getStats().getRadLevel(uuid) + 1.5);
         }
         if (e.getItem().getItemMeta() != null && e.getItem().getItemMeta().getDisplayName() != null && e.getItem().getItemMeta().getDisplayName().length() > 6 && e.getItem().getItemMeta().getLore() != null) {
             boolean custom = true;
