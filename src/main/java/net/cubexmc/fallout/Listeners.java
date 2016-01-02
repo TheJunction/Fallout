@@ -128,7 +128,7 @@ public class Listeners implements Listener {
                     locs.put(e.getCurrentItem().getItemMeta().getDisplayName(), p.getLocation());
                     Fallout.getInstance().getGui().setLoc(p.getUniqueId(), locs);
                     e.getInventory().clear();
-                    p.setLevel(p.getLevel() - 1);
+                    p.giveExpLevels(-1);
                     ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutCloseWindow(1));
                     saveLoc.remove(p.getUniqueId());
                 }
@@ -192,7 +192,7 @@ public class Listeners implements Listener {
                             item.setItemMeta(meta);
                             save.setItem(0, item);
                             saveLoc.add(p.getUniqueId());
-                            p.setLevel(p.getLevel() + 1);
+                            p.giveExpLevels(1);
                             break;
                         case "Delete Location":
                             deleteLoc.add(p.getUniqueId());
@@ -233,40 +233,6 @@ public class Listeners implements Listener {
                         p.setItemOnCursor(cursor);
                     }
                 }
-            } else {
-                HashMap<Material, Integer> ingrLvl = new HashMap<>();
-                ingrLvl.put(Material.COBBLESTONE, 2);
-                ingrLvl.put(Material.IRON_INGOT, 3);
-                ingrLvl.put(Material.DIAMOND, 7);
-                if (ingrLvl.containsKey(e.getCurrentItem().getType())) {
-                    if (Fallout.getInstance().getStats().getILevel(e.getWhoClicked().getUniqueId()) < ingrLvl.get(e.getCurrentItem().getType())) {
-                        e.setCancelled(true);
-                        e.getWhoClicked().sendMessage(ChatColor.RED + "You are not intelligent enough to handle that item carefully. They slip out of your hands and one falls down a crack in the floor.");
-                        int newAmt = e.getCurrentItem().getAmount() - 1;
-                        if (newAmt == 0) {
-                            e.setCurrentItem(null);
-                        } else {
-                            e.getCurrentItem().setAmount(newAmt);
-                        }
-                        e.getWhoClicked().closeInventory();
-                    }
-                }
-                HashMap<String, Integer> craftLvl = new HashMap<>();
-                craftLvl.put(ChatColor.RED + "Rad Away", 4);
-                craftLvl.put(ChatColor.BLUE + "Spawn Trader", 5);
-                craftLvl.put(ChatColor.RED + "Rad-X", 6);
-                craftLvl.put(ChatColor.DARK_GREEN + "Energized Fusion Core", 8);
-                craftLvl.put(ChatColor.GOLD + "Power Helmet", 9);
-                craftLvl.put(ChatColor.GOLD + "Power Chestplate", 9);
-                craftLvl.put(ChatColor.GOLD + "Power Leggings", 9);
-                craftLvl.put(ChatColor.GOLD + "Power Boots", 9);
-                if (e.getCurrentItem().getItemMeta() != null && e.getCurrentItem().getItemMeta().getDisplayName() != null && craftLvl.containsKey(e.getCurrentItem().getItemMeta().getDisplayName())) {
-                    if (Fallout.getInstance().getStats().getILevel(e.getWhoClicked().getUniqueId()) < craftLvl.get(e.getCurrentItem().getItemMeta().getDisplayName())) {
-                        e.setCancelled(true);
-                        e.getWhoClicked().sendMessage(ChatColor.RED + "You are not intelligent enough to craft this item.");
-                        e.getWhoClicked().closeInventory();
-                    }
-                }
             }
         }
     }
@@ -280,7 +246,7 @@ public class Listeners implements Listener {
             if (e.getInventory().getContents() != null) {
                 e.getInventory().clear();
             }
-            p.setLevel(p.getLevel() - 1);
+            p.giveExpLevels(-1);
             saveLoc.remove(uuid);
         } else if (e.getInventory().getName().equals("STATUS")) {
             p.getInventory().setHelmet(e.getInventory().getItem(22));
@@ -330,6 +296,32 @@ public class Listeners implements Listener {
                 if (e.getInventory().getMatrix()[4].getItemMeta().getDisplayName() != null && e.getInventory().getMatrix()[4].getItemMeta().getDisplayName().equals(ChatColor.DARK_GREEN + "Energized Fusion Core")) {
                     item.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 8);
                 } else {
+                    e.getInventory().setResult(new ItemStack(Material.AIR));
+                }
+            }
+        } else {
+            HashMap<Material, Integer> ingrLvl = new HashMap<>();
+            ingrLvl.put(Material.COBBLESTONE, 2);
+            ingrLvl.put(Material.IRON_INGOT, 3);
+            ingrLvl.put(Material.DIAMOND, 7);
+            if (ingrLvl.containsKey(e.getInventory().getResult().getType())) {
+                if (Fallout.getInstance().getStats().getILevel(e.getViewers().get(0).getUniqueId()) < ingrLvl.get(e.getInventory().getResult().getType())) {
+                    e.getViewers().get(0).sendMessage(ChatColor.RED + "You are not intelligent enough to craft this item.");
+                    e.getInventory().setResult(new ItemStack(Material.AIR));
+                }
+            }
+            HashMap<String, Integer> craftLvl = new HashMap<>();
+            craftLvl.put(ChatColor.RED + "Rad Away", 4);
+            craftLvl.put(ChatColor.BLUE + "Spawn Trader", 5);
+            craftLvl.put(ChatColor.RED + "Rad-X", 6);
+            craftLvl.put(ChatColor.DARK_GREEN + "Energized Fusion Core", 8);
+            craftLvl.put(ChatColor.GOLD + "Power Helmet", 9);
+            craftLvl.put(ChatColor.GOLD + "Power Chestplate", 9);
+            craftLvl.put(ChatColor.GOLD + "Power Leggings", 9);
+            craftLvl.put(ChatColor.GOLD + "Power Boots", 9);
+            if (e.getInventory().getResult().getItemMeta() != null && e.getInventory().getResult().getItemMeta().getDisplayName() != null && craftLvl.containsKey(e.getInventory().getResult().getItemMeta().getDisplayName())) {
+                if (Fallout.getInstance().getStats().getILevel(e.getViewers().get(0).getUniqueId()) < craftLvl.get(e.getInventory().getResult().getItemMeta().getDisplayName())) {
+                    e.getViewers().get(0).sendMessage(ChatColor.RED + "You are not intelligent enough to craft this item.");
                     e.getInventory().setResult(new ItemStack(Material.AIR));
                 }
             }
@@ -509,6 +501,20 @@ public class Listeners implements Listener {
         if (e.getEntity() instanceof PigZombie) {
             PigZombie pigzombie = (PigZombie) e.getEntity();
             pigzombie.setAngry(true);
+        }
+    }
+
+    @EventHandler
+    public void achievement(PlayerAchievementAwardedEvent e) {
+        if (!e.isCancelled()) {
+            int lvl = e.getPlayer().getLevel();
+            if (lvl <= 16) {
+                e.getPlayer().giveExp(lvl + 4);
+            } else if (lvl <= 31) {
+                e.getPlayer().giveExp((int) Math.round(2.5 * lvl - 19));
+            } else {
+                e.getPlayer().giveExp((int) Math.round(4.5 * lvl - 79));
+            }
         }
     }
 
