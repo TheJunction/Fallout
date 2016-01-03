@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by David on 12/23.
@@ -81,6 +82,9 @@ public class Fallout extends JavaPlugin {
             } else if (args.length == 1 && Bukkit.getPlayer(args[0]) != null) {
                 Bukkit.getPlayer(args[0]).getInventory().addItem(getBook());
             }
+        } else if (lbl.equalsIgnoreCase("giveradiation") && !(se instanceof Player)) {
+            UUID uuid = Bukkit.getPlayer(args[0]).getUniqueId();
+            getStats().setRadLevel(uuid, getStats().getRadLevel(uuid) + Integer.valueOf(args[1]));
         }
         return false;
     }

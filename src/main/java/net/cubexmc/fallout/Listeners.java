@@ -14,10 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
@@ -325,6 +322,15 @@ public class Listeners implements Listener {
                     e.getInventory().setResult(new ItemStack(Material.AIR));
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void attack(EntityDamageByEntityEvent e) {
+        String bloatFlyBase = ChatColor.DARK_GREEN + "Bloat" + ChatColor.BLACK + "FLY";
+        List<String> cancels = Arrays.asList(bloatFlyBase, ChatColor.BLACK + "Black " + bloatFlyBase);
+        if (e.getEntity() instanceof Player && e.getDamager().getCustomName() != null && cancels.contains(e.getDamager().getCustomName())) {
+            e.setDamage(0);
         }
     }
 
