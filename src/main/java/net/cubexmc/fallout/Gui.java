@@ -86,7 +86,7 @@ public class Gui {
         bm.setAuthor("Vault Boy");
         bm.setDisplayName("Fallout Guide");
         bm.setLore(Fallout.getInstance().getIdentifier());
-        item.setItemMeta(meta);
+        item.setItemMeta(bm);
         menu.add(item);
     }
 

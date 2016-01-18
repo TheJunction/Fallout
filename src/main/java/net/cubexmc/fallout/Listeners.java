@@ -93,14 +93,23 @@ public class Listeners implements Listener {
                 Fallout.getInstance().getStats().setRadZone(uuid, false);
             }
             double invWeight = Fallout.getInstance().getGui().getInvWeight(p);
-            p.setSprinting(true);
             if (!Fallout.getInstance().getStats().getStrResist(uuid) && invWeight - 6 >= Fallout.getInstance().getStats().getSLevel(uuid) * 5) {
                 p.setWalkSpeed(0.125f);
-            } else if (!Fallout.getInstance().getStats().getStrResist(uuid) && invWeight >= Fallout.getInstance().getStats().getSLevel(uuid) * 5) {
-                p.setWalkSpeed(0.175f);
             } else {
-                p.setWalkSpeed(0.3f);
+                p.setWalkSpeed(0.175f);
             }
+        }
+    }
+
+    @EventHandler
+    public void sprint(PlayerToggleSprintEvent e) {
+        Player p = e.getPlayer();
+        UUID uuid = p.getUniqueId();
+        double invWeight = Fallout.getInstance().getGui().getInvWeight(p);
+        if (!Fallout.getInstance().getStats().getStrResist(uuid) && invWeight >= Fallout.getInstance().getStats().getSLevel(uuid) * 5) {
+            p.setFoodLevel(6);
+        } else {
+            p.setFoodLevel(19);
         }
     }
 

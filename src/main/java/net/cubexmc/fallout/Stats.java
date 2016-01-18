@@ -138,6 +138,9 @@ public class Stats {
                     if (getPowerSuit(p.getUniqueId())) {
                         ItemStack chest = p.getInventory().getChestplate();
                         chest.setDurability((short) (chest.getDurability() + 1));
+                        if (chest.getDurability() >= chest.getType().getMaxDurability()) {
+                            chest.setType(Material.AIR);
+                        }
                     }
                 }
             }
