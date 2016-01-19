@@ -207,7 +207,7 @@ public class Listeners implements Listener {
                         case "Workbench":
                             p.openWorkbench(null, true);
                             break;
-                        case "Fallout Guide":
+                        case "Fallout Handbook":
                             p.getInventory().addItem(Fallout.getInstance().getBook());
                             break;
                         default:

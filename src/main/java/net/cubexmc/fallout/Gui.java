@@ -84,7 +84,7 @@ public class Gui {
         BookMeta bm = (BookMeta) item.getItemMeta();
         bm.setTitle("Fallout Handbook");
         bm.setAuthor("Vault Boy");
-        bm.setDisplayName("Fallout Guide");
+        bm.setDisplayName("Fallout Handbook");
         bm.setLore(Fallout.getInstance().getIdentifier());
         item.setItemMeta(bm);
         menu.add(item);
