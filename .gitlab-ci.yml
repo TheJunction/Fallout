@@ -3,4 +3,5 @@ image: maven:3-jdk-7
 build:
   script: "mvn clean package -B"
   artifacts:
-  - target/Fallout.jar
+    paths:
+    - target/Fallout.jar
