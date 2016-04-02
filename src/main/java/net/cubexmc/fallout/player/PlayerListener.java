@@ -3,12 +3,13 @@
  * Created by PantherMan594.
  */
 
-package net.cubexmc.fallout;
+package net.cubexmc.fallout.player;
 
-import net.minecraft.server.v1_8_R3.*;
+import net.cubexmc.fallout.Fallout;
+import net.minecraft.server.v1_9_R1.*;
 import org.bukkit.*;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,12 +31,12 @@ import java.util.*;
  *
  * @author David
  */
-public class Listeners implements Listener {
+public class PlayerListener implements Listener {
     private List<UUID> saveLoc;
     private List<UUID> deleteLoc;
     private Map<UUID, Location> dieLoc;
 
-    public Listeners() {
+    PlayerListener() {
         saveLoc = new ArrayList<>();
         deleteLoc = new ArrayList<>();
         dieLoc = new HashMap<>();
@@ -43,7 +44,7 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void join(PlayerJoinEvent e) {
-        Fallout.getInstance().getSettings().load(e.getPlayer().getUniqueId());
+        Fallout.getInstance().getPlayerSettings().load(e.getPlayer().getUniqueId());
         Fallout.getInstance().getStats().setXpLevel(e.getPlayer().getUniqueId(), e.getPlayer().getLevel());
         e.getPlayer().getInventory().setItem(0, Fallout.getInstance().getPip());
         e.getPlayer().setResourcePack("http://cubexmc.net/files/Fallout.zip");
@@ -52,12 +53,12 @@ public class Listeners implements Listener {
     @EventHandler
     public void quit(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
-        Fallout.getInstance().getSettings().save(uuid);
+        Fallout.getInstance().getPlayerSettings().save(uuid);
         saveLoc.remove(uuid);
         deleteLoc.remove(uuid);
         dieLoc.remove(uuid);
-        Fallout.getInstance().getGui().getLocs().remove(uuid);
-        Fallout.getInstance().getGui().getInvs().remove(uuid);
+        Fallout.getInstance().getPlayerGui().getLocs().remove(uuid);
+        Fallout.getInstance().getPlayerGui().getInvs().remove(uuid);
         Fallout.getInstance().getStats().setRadZone(uuid, false);
         Fallout.getInstance().getStats().setStrResist(uuid, false);
         Fallout.getInstance().getStats().setRadResist(uuid, false);
@@ -92,7 +93,7 @@ public class Listeners implements Listener {
             } else {
                 Fallout.getInstance().getStats().setRadZone(uuid, false);
             }
-            double invWeight = Fallout.getInstance().getGui().getInvWeight(p);
+            double invWeight = Fallout.getInstance().getPlayerGui().getInvWeight(p);
             if (!Fallout.getInstance().getStats().getStrResist(uuid) && invWeight - 6 >= Fallout.getInstance().getStats().getSLevel(uuid) * 5) {
                 p.setWalkSpeed(0.125f);
             } else {
@@ -105,7 +106,7 @@ public class Listeners implements Listener {
     public void sprint(PlayerToggleSprintEvent e) {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
-        double invWeight = Fallout.getInstance().getGui().getInvWeight(p);
+        double invWeight = Fallout.getInstance().getPlayerGui().getInvWeight(p);
         if (!Fallout.getInstance().getStats().getStrResist(uuid) && invWeight >= Fallout.getInstance().getStats().getSLevel(uuid) * 5) {
             p.setFoodLevel(6);
         } else {
@@ -130,9 +131,9 @@ public class Listeners implements Listener {
                 e.setCancelled(true);
                 Player p = (Player) e.getWhoClicked();
                 if (saveLoc.contains(p.getUniqueId()) && e.getInventory().getType() == InventoryType.ANVIL && e.getCurrentItem().getType() == Material.NAME_TAG) {
-                    HashMap<String, Location> locs = Fallout.getInstance().getGui().getLocs().get(p.getUniqueId());
+                    HashMap<String, Location> locs = Fallout.getInstance().getPlayerGui().getLocs().get(p.getUniqueId());
                     locs.put(e.getCurrentItem().getItemMeta().getDisplayName(), p.getLocation());
-                    Fallout.getInstance().getGui().setLoc(p.getUniqueId(), locs);
+                    Fallout.getInstance().getPlayerGui().setLoc(p.getUniqueId(), locs);
                     e.getInventory().clear();
                     p.giveExpLevels(-1);
                     ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutCloseWindow(1));
@@ -146,7 +147,7 @@ public class Listeners implements Listener {
                             if (e.getClick() == ClickType.DOUBLE_CLICK) {
                                 boolean openInv = false;
                                 if (e.getInventory().getName() != null && e.getInventory().getName().equals("INV")) {
-                                    p.openInventory(Fallout.getInstance().getGui().openStatus(p));
+                                    p.openInventory(Fallout.getInstance().getPlayerGui().openStatus(p));
                                     openInv = true;
                                 }
                                 for (int i = 9; i < 36; i++) {
@@ -156,27 +157,27 @@ public class Listeners implements Listener {
                                     }
                                 }
                                 if (openInv) {
-                                    p.openInventory(Fallout.getInstance().getGui().openInv(p));
+                                    p.openInventory(Fallout.getInstance().getPlayerGui().openInv(p));
                                 }
                             }
                             break;
                         case "STATUS":
-                            p.openInventory(Fallout.getInstance().getGui().openStatus(p));
+                            p.openInventory(Fallout.getInstance().getPlayerGui().openStatus(p));
                             break;
                         case "LIES":
-                            p.openInventory(Fallout.getInstance().getGui().openLies(p));
+                            p.openInventory(Fallout.getInstance().getPlayerGui().openLies(p));
                             break;
                         case "INV":
-                            p.openInventory(Fallout.getInstance().getGui().openInv(p));
+                            p.openInventory(Fallout.getInstance().getPlayerGui().openInv(p));
                             break;
                         case "DATA":
-                            p.openInventory(Fallout.getInstance().getGui().openData(p));
+                            p.openInventory(Fallout.getInstance().getPlayerGui().openData(p));
                             break;
                         case "MAP":
-                            p.openInventory(Fallout.getInstance().getGui().openMap(p));
+                            p.openInventory(Fallout.getInstance().getPlayerGui().openMap(p));
                             break;
                         case "RADIO":
-                            p.openInventory(Fallout.getInstance().getGui().openRadio(p));
+                            p.openInventory(Fallout.getInstance().getPlayerGui().openRadio(p));
                             break;
                         case "Save Location":
                             EntityPlayer entityPlayer = ((CraftPlayer) p).getHandle();
@@ -229,10 +230,10 @@ public class Listeners implements Listener {
                             } else if (e.getCurrentItem().getItemMeta().getDisplayName().startsWith("Play " + ChatColor.BLUE)) {
                                 ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutWorldEvent(1005, new BlockPosition(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()), e.getCurrentItem().getTypeId(), false));
                             } else if (deleteLoc.contains(p.getUniqueId()) && e.getInventory().getName().equals("DATA") && e.getCurrentItem().getItemMeta().getLore() != null && e.getCurrentItem().getItemMeta().getLore().get(1).contains("World: ")) {
-                                HashMap<String, Location> locs = Fallout.getInstance().getGui().getLocs().get(p.getUniqueId());
+                                HashMap<String, Location> locs = Fallout.getInstance().getPlayerGui().getLocs().get(p.getUniqueId());
                                 locs.remove(e.getCurrentItem().getItemMeta().getDisplayName());
-                                Fallout.getInstance().getGui().setLoc(p.getUniqueId(), locs);
-                                p.openInventory(Fallout.getInstance().getGui().openData(p));
+                                Fallout.getInstance().getPlayerGui().setLoc(p.getUniqueId(), locs);
+                                p.openInventory(Fallout.getInstance().getPlayerGui().openData(p));
                             }
                     }
                     if (cursor != null) {
@@ -260,23 +261,20 @@ public class Listeners implements Listener {
             p.getInventory().setLeggings(e.getInventory().getItem(40));
             p.getInventory().setBoots(e.getInventory().getItem(49));
         } else if (e.getInventory().getName().equals("INV")) {
-            Fallout.getInstance().getGui().setInv(uuid, e.getInventory().getContents());
+            Fallout.getInstance().getPlayerGui().setInv(uuid, e.getInventory().getContents());
         }
-        Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                int dura = p.getInventory().getItem(0).getDurability();
-                if (dura != 9) {
-                    List<String> names = new ArrayList<>();
-                    names.add("STATUS");
-                    names.add("LIES");
-                    names.add("INV");
-                    names.add("DATA");
-                    names.add("MAP");
-                    names.add("RADIO");
-                    if (p.getOpenInventory().getTopInventory().getName() == null || !p.getOpenInventory().getTopInventory().getName().startsWith(names.get(dura))) {
-                        p.getInventory().getItem(0).setDurability((short) 9);
-                    }
+        Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), () -> {
+            int dura = p.getInventory().getItem(0).getDurability();
+            if (dura != 9) {
+                List<String> names = new ArrayList<>();
+                names.add("STATUS");
+                names.add("LIES");
+                names.add("INV");
+                names.add("DATA");
+                names.add("MAP");
+                names.add("RADIO");
+                if (p.getOpenInventory().getTopInventory().getName() == null || !p.getOpenInventory().getTopInventory().getName().startsWith(names.get(dura))) {
+                    p.getInventory().getItem(0).setDurability((short) 9);
                 }
             }
         }, 5);
@@ -286,9 +284,9 @@ public class Listeners implements Listener {
     public void interact(PlayerInteractEvent e) {
         if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) && e.getItem() != null && e.getItem().getItemMeta().getDisplayName() != null && e.getItem().getItemMeta().getDisplayName().equals("Pip-Boy") && e.getItem().getItemMeta().getLore() != null && e.getItem().getItemMeta().getLore().get(0).equals(Fallout.getInstance().getIdentifier().get(0))) {
             if (e.getPlayer().isSneaking()) {
-                e.getPlayer().openInventory(Fallout.getInstance().getGui().openInv(e.getPlayer()));
+                e.getPlayer().openInventory(Fallout.getInstance().getPlayerGui().openInv(e.getPlayer()));
             } else {
-                e.getPlayer().openInventory(Fallout.getInstance().getGui().openStatus(e.getPlayer()));
+                e.getPlayer().openInventory(Fallout.getInstance().getPlayerGui().openStatus(e.getPlayer()));
             }
         }
     }
@@ -383,26 +381,18 @@ public class Listeners implements Listener {
                     Fallout.getInstance().getStats().setSLevel(e.getEntity().getUniqueId(), Fallout.getInstance().getStats().getSLevel(e.getEntity().getUniqueId()) - 1);
                 }
             }
-            Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    for (ItemStack item : Fallout.getInstance().getGui().getInvs().get(uuid)) {
-                        if (item != null && !(item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains(Fallout.getInstance().getIdentifier().get(0)))) {
-                            loc.getWorld().dropItemNaturally(loc, item);
-                        }
+            Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), () -> {
+                for (ItemStack item : Fallout.getInstance().getPlayerGui().getInvs().get(uuid)) {
+                    if (item != null && !(item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains(Fallout.getInstance().getIdentifier().get(0)))) {
+                        loc.getWorld().dropItemNaturally(loc, item);
                     }
-                    Fallout.getInstance().getGui().setInv(uuid, new ItemStack[54]);
                 }
+                Fallout.getInstance().getPlayerGui().setInv(uuid, new ItemStack[54]);
             }, 20);
         } else {
             e.setKeepInventory(true);
         }
-        Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                ((CraftPlayer) p).getHandle().playerConnection.a(new PacketPlayInClientCommand(PacketPlayInClientCommand.EnumClientCommand.PERFORM_RESPAWN));
-            }
-        }, 10);
+        Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), () -> ((CraftPlayer) p).getHandle().playerConnection.a(new PacketPlayInClientCommand(PacketPlayInClientCommand.EnumClientCommand.PERFORM_RESPAWN)), 10);
     }
 
     @EventHandler
@@ -437,8 +427,8 @@ public class Listeners implements Listener {
                 e.getEntity().setHealth(0);
             }
         } else {
-            if (newLvls <= 2 && Fallout.getInstance().getGui().getInvs().containsKey(uuid)) {
-                List<ItemStack> inv = new ArrayList(Arrays.asList(Fallout.getInstance().getGui().getInvs().get(uuid)));
+            if (newLvls <= 2 && Fallout.getInstance().getPlayerGui().getInvs().containsKey(uuid)) {
+                List<ItemStack> inv = new ArrayList(Arrays.asList(Fallout.getInstance().getPlayerGui().getInvs().get(uuid)));
                 if (inv != null) {
                     for (int i = 9; i < inv.size(); i++) {
                         ItemStack stack = inv.get(i);
@@ -446,7 +436,7 @@ public class Listeners implements Listener {
                             inv.set(i, new ItemStack(Material.AIR));
                             Fallout.getInstance().getStats().setRadLevel(uuid, 0);
                             newLvls = 20;
-                            Fallout.getInstance().getGui().setInv(uuid, inv.toArray(new ItemStack[54]));
+                            Fallout.getInstance().getPlayerGui().setInv(uuid, inv.toArray(new ItemStack[54]));
                             e.getEntity().sendMessage(ChatColor.GREEN + "Pip-Boy: " + ChatColor.GRAY + "You were about to die to radiation, so I consumed a Rad Away for you. Be more careful next time!");
                             break;
                         }
@@ -485,24 +475,14 @@ public class Listeners implements Listener {
                     break;
                 case "cRad-X":
                     Fallout.getInstance().getStats().setRadResist(uuid, true);
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(Fallout.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            Fallout.getInstance().getStats().setRadResist(uuid, false);
-                        }
-                    }, 6000);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(Fallout.getInstance(), () -> Fallout.getInstance().getStats().setRadResist(uuid, false), 6000);
                     break;
                 case "aNuka-Cola":
                     e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3600, 3, true));
                     e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 3600, 3, true));
                     e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 3600, 1, true));
                     Fallout.getInstance().getStats().setStrResist(uuid, true);
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(Fallout.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            Fallout.getInstance().getStats().setStrResist(uuid, false);
-                        }
-                    }, 3600);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(Fallout.getInstance(), () -> Fallout.getInstance().getStats().setStrResist(uuid, false), 3600);
                     break;
                 default:
                     custom = false;
@@ -558,24 +538,19 @@ public class Listeners implements Listener {
     @EventHandler
     public void pack(final PlayerResourcePackStatusEvent e) {
         if (e.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
-            Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    e.getPlayer().kickPlayer(ChatColor.RED + "You must accept the resource pack to play!\nTry setting server resource packs to \"Enabled\"\nby editing the server on the multiplayer menu.");
-                }
-            }, 20);
+            Bukkit.getScheduler().runTaskLater(Fallout.getInstance(), () -> e.getPlayer().kickPlayer(ChatColor.RED + "You must accept the resource pack to play!\nTry setting server resource packs to \"Enabled\"\nby editing the server on the multiplayer menu."), 20);
         }
     }
 
-    public boolean addItem(UUID uuid, ItemStack stack) {
-        List<ItemStack> inv = Arrays.asList(Fallout.getInstance().getGui().getInvs().get(uuid));
+    private boolean addItem(UUID uuid, ItemStack stack) {
+        List<ItemStack> inv = Arrays.asList(Fallout.getInstance().getPlayerGui().getInvs().get(uuid));
         if (inv != null) {
             for (int j = 9; j < 54; j++) {
                 ItemStack item = inv.get(j);
                 if (item == null || item.getType() == Material.AIR) {
                     inv.set(j, stack);
                     ItemStack[] invArray = inv.toArray(new ItemStack[inv.size()]);
-                    Fallout.getInstance().getGui().setInv(uuid, invArray);
+                    Fallout.getInstance().getPlayerGui().setInv(uuid, invArray);
                     return true;
                 } else if (item != null && item.isSimilar(stack)) {
                     int amt = item.getAmount() + stack.getAmount();
@@ -586,7 +561,7 @@ public class Listeners implements Listener {
                     } else {
                         item.setAmount(amt);
                         ItemStack[] invArray = inv.toArray(new ItemStack[inv.size()]);
-                        Fallout.getInstance().getGui().setInv(uuid, invArray);
+                        Fallout.getInstance().getPlayerGui().setInv(uuid, invArray);
                         return true;
                     }
                 }
@@ -595,7 +570,7 @@ public class Listeners implements Listener {
             inv = new ArrayList<>();
             inv.set(0, stack);
             ItemStack[] invArray = inv.toArray(new ItemStack[inv.size()]);
-            Fallout.getInstance().getGui().setInv(uuid, invArray);
+            Fallout.getInstance().getPlayerGui().setInv(uuid, invArray);
             return true;
         }
         Location loc = Bukkit.getPlayer(uuid).getLocation();
@@ -606,7 +581,7 @@ public class Listeners implements Listener {
 
     public final class FakeAnvil extends ContainerAnvil {
 
-        public FakeAnvil(EntityHuman entityHuman) {
+        FakeAnvil(EntityHuman entityHuman) {
             super(entityHuman.inventory, entityHuman.world, new BlockPosition(0,0,0), entityHuman);
         }
 

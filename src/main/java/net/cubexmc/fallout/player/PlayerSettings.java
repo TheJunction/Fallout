@@ -3,8 +3,9 @@
  * Created by PantherMan594.
  */
 
-package net.cubexmc.fallout;
+package net.cubexmc.fallout.player;
 
+import net.cubexmc.fallout.Fallout;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,7 +23,7 @@ import java.util.UUID;
  *
  * @author David
  */
-public class Settings {
+public class PlayerSettings {
 
     public void load(UUID uuid) {
         boolean isNew = false;
@@ -80,8 +81,8 @@ public class Settings {
         Fallout.getInstance().getStats().setILevel(uuid, iLevel);
         Fallout.getInstance().getStats().setELevel(uuid, eLevel);
         Fallout.getInstance().getStats().setSLevel(uuid, sLevel);
-        Fallout.getInstance().getGui().setInv(uuid, inv);
-        Fallout.getInstance().getGui().setLoc(uuid, locs);
+        Fallout.getInstance().getPlayerGui().setInv(uuid, inv);
+        Fallout.getInstance().getPlayerGui().setLoc(uuid, locs);
     }
 
     public void save(UUID uuid) {
@@ -93,14 +94,14 @@ public class Settings {
         con.set("stats.intelligence", Fallout.getInstance().getStats().getILevel(uuid));
         con.set("stats.endurance", Fallout.getInstance().getStats().getELevel(uuid));
         con.set("stats.strength", Fallout.getInstance().getStats().getSLevel(uuid));
-        if (Fallout.getInstance().getGui().getInvs().containsKey(uuid)) {
-            ItemStack[] items = Fallout.getInstance().getGui().getInvs().get(uuid);
+        if (Fallout.getInstance().getPlayerGui().getInvs().containsKey(uuid)) {
+            ItemStack[] items = Fallout.getInstance().getPlayerGui().getInvs().get(uuid);
             con.set("items", items);
         }
-        if (Fallout.getInstance().getGui().getLocs().containsKey(uuid)) {
+        if (Fallout.getInstance().getPlayerGui().getLocs().containsKey(uuid)) {
             int i = 0;
-            for (String name : Fallout.getInstance().getGui().getLocs().get(uuid).keySet()) {
-                Location loc = Fallout.getInstance().getGui().getLocs().get(uuid).get(name);
+            for (String name : Fallout.getInstance().getPlayerGui().getLocs().get(uuid).keySet()) {
+                Location loc = Fallout.getInstance().getPlayerGui().getLocs().get(uuid).get(name);
                 con.set("locs." + i + ".name", name);
                 con.set("locs." + i + ".world", loc.getWorld().getName());
                 con.set("locs." + i + ".x", loc.getBlockX());

@@ -3,13 +3,14 @@
  * Created by PantherMan594.
  */
 
-package net.cubexmc.fallout;
+package net.cubexmc.fallout.player;
 
 import com.earth2me.essentials.api.Economy;
 import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
+import net.cubexmc.fallout.Fallout;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,21 +21,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by David on 12/26.
  *
  * @author David
  */
-public class Gui {
+public class PlayerGui {
     private Map<UUID, ItemStack[]> invs;
     private Map<UUID, HashMap<String, Location>> locs;
     private List<ItemStack> menu;
 
-    public Gui() {
+    public PlayerGui() {
         invs = new HashMap<>();
         locs = new HashMap<>();
         menu = new ArrayList<>();
@@ -93,7 +94,6 @@ public class Gui {
     public void setInv(UUID uuid, ItemStack[] inv) {
         this.invs.put(uuid, inv);
     }
-
 
     public Map<UUID, ItemStack[]> getInvs() {
         return invs;
@@ -162,10 +162,7 @@ public class Gui {
         ItemStack effects = new ItemStack(Material.GOLD_BOOTS);
         meta = effects.getItemMeta();
         meta.setDisplayName("Status Effects");
-        List<String> lore = new ArrayList<>();
-        for (PotionEffect pE : p.getActivePotionEffects()) {
-            lore.add(ChatColor.GRAY + pE.getType().getName() + " " + pE.getAmplifier() + " (" + pE.getDuration() + ")");
-        }
+        List<String> lore = p.getActivePotionEffects().stream().map(pE -> ChatColor.GRAY + pE.getType().getName() + " " + pE.getAmplifier() + " (" + pE.getDuration() + ")").collect(Collectors.toList());
         lore.add(Fallout.getInstance().getIdentifier().get(0));
         meta.setLore(lore);
         effects.setItemMeta(meta);
@@ -304,11 +301,11 @@ public class Gui {
         resInv.setItem(11, save);
         resInv.setItem(15, delete);
 
-        if (Fallout.getInstance().getGui().getLocs().containsKey(uuid)) {
+        if (Fallout.getInstance().getPlayerGui().getLocs().containsKey(uuid)) {
             int i = 18;
-            for (String name : Fallout.getInstance().getGui().getLocs().get(uuid).keySet()) {
+            for (String name : Fallout.getInstance().getPlayerGui().getLocs().get(uuid).keySet()) {
                 if (i < 36) {
-                    Location loc = Fallout.getInstance().getGui().getLocs().get(uuid).get(name);
+                    Location loc = Fallout.getInstance().getPlayerGui().getLocs().get(uuid).get(name);
                     ItemStack locItem = new ItemStack(Material.MAP);
                     meta = locItem.getItemMeta();
                     meta.setDisplayName(name);
@@ -498,7 +495,7 @@ public class Gui {
 
     public double getInvWeight(Player p) {
         double invWeight = 0;
-        for (ItemStack stack : Fallout.getInstance().getGui().getInvs().get(p.getUniqueId())) {
+        for (ItemStack stack : Fallout.getInstance().getPlayerGui().getInvs().get(p.getUniqueId())) {
             if (stack != null && stack.getMaxStackSize() > 0) {
                 invWeight += stack.getAmount() / ((double) stack.getMaxStackSize());
             }
