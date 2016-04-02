@@ -5,6 +5,12 @@
 
 package net.cubexmc.fallout;
 
+import net.cubexmc.fallout.player.PlayerGui;
+import net.cubexmc.fallout.player.PlayerListener;
+import net.cubexmc.fallout.player.PlayerSettings;
+import net.cubexmc.fallout.player.Stats;
+import net.cubexmc.fallout.settlement.SettlementSettings;
+import net.cubexmc.fallout.settlement.SettlerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,10 +33,12 @@ import java.util.UUID;
  * @author David
  */
 public class Fallout extends JavaPlugin {
-    public static Fallout instance;
-    private Settings settings;
+    private static Fallout instance;
+    private PlayerSettings playerSettings;
+    private SettlementSettings settlementSettings;
+    private SettlerManager settlerManager;
     private Stats stats;
-    private Gui gui;
+    private PlayerGui playerGui;
     private List<String> identifier;
     private ItemStack pip;
 
@@ -40,21 +48,23 @@ public class Fallout extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getServer().getPluginManager().registerEvents(new Listeners(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getScheduler().cancelTasks(this);
         instance = this;
         identifier = new ArrayList<>();
         identifier.add(ChatColor.BLACK + "*");
-        gui = new Gui();
+        playerGui = new PlayerGui();
         stats = new Stats();
-        settings = new Settings();
+        playerSettings = new PlayerSettings();
+        settlementSettings = new SettlementSettings();
+        settlerManager = new SettlerManager();
         pip = new ItemStack(Material.INK_SACK, 1, (short) 9);
         ItemMeta meta = pip.getItemMeta();
         meta.setDisplayName("Pip-Boy");
         meta.setLore(Arrays.asList(Fallout.getInstance().getIdentifier().get(0), "Right click to open your Pip-Boy!", "Shift right click to open your Pip-Boy inventory!", "Double click item in inventory", "  to transfer items to Pip-Boy!"));
         pip.setItemMeta(meta);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            settings.load(p.getUniqueId());
+            playerSettings.load(p.getUniqueId());
             stats.setXpLevel(p.getUniqueId(), p.getLevel());
             p.getInventory().setItem(0, pip);
         }
@@ -64,7 +74,7 @@ public class Fallout extends JavaPlugin {
     @Override
     public void onDisable() {
         for (Player p : Bukkit.getOnlinePlayers()) {
-            settings.save(p.getUniqueId());
+            playerSettings.save(p.getUniqueId());
         }
     }
 
@@ -73,7 +83,7 @@ public class Fallout extends JavaPlugin {
             Player p = (Player) se;
             if (lbl.equalsIgnoreCase("pip")) {
                 p.getInventory().setItem(0, getPip());
-                p.openInventory(Fallout.getInstance().getGui().openStatus(p));
+                p.openInventory(Fallout.getInstance().getPlayerGui().openStatus(p));
             }
         }
         if (lbl.equalsIgnoreCase("handbook")) {
@@ -123,16 +133,24 @@ public class Fallout extends JavaPlugin {
         return book;
     }
 
-    public Settings getSettings() {
-        return settings;
+    public PlayerSettings getPlayerSettings() {
+        return playerSettings;
+    }
+
+    public SettlementSettings getSettlementSettings() {
+        return settlementSettings;
+    }
+
+    public SettlerManager getSettlerManager() {
+        return settlerManager;
     }
 
     public Stats getStats() {
         return stats;
     }
 
-    public Gui getGui() {
-        return gui;
+    public PlayerGui getPlayerGui() {
+        return playerGui;
     }
 
     public List<String> getIdentifier() {

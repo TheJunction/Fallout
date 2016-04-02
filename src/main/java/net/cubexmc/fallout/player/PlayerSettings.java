@@ -5,6 +5,7 @@
 
 package net.cubexmc.fallout.player;
 
+import com.massivecraft.factions.entity.MPlayer;
 import net.cubexmc.fallout.Fallout;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -83,6 +84,7 @@ public class PlayerSettings {
         Fallout.getInstance().getStats().setSLevel(uuid, sLevel);
         Fallout.getInstance().getPlayerGui().setInv(uuid, inv);
         Fallout.getInstance().getPlayerGui().setLoc(uuid, locs);
+        Fallout.getInstance().getSettlementSettings().load(MPlayer.get(uuid).getFaction());
     }
 
     public void save(UUID uuid) {

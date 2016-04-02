@@ -36,7 +36,7 @@ public class PlayerListener implements Listener {
     private List<UUID> deleteLoc;
     private Map<UUID, Location> dieLoc;
 
-    PlayerListener() {
+    public PlayerListener() {
         saveLoc = new ArrayList<>();
         deleteLoc = new ArrayList<>();
         dieLoc = new HashMap<>();
@@ -579,7 +579,7 @@ public class PlayerListener implements Listener {
         return false;
     }
 
-    public final class FakeAnvil extends ContainerAnvil {
+    private final class FakeAnvil extends ContainerAnvil {
 
         FakeAnvil(EntityHuman entityHuman) {
             super(entityHuman.inventory, entityHuman.world, new BlockPosition(0,0,0), entityHuman);

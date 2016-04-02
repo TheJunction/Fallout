@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
  *
  * @author David
  */
-public class ActionBar {
+class ActionBar {
 
-    public ActionBar(Player p, String msg) {
+    ActionBar(Player p, String msg) {
         IChatBaseComponent icbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + msg + "\"}");
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(icbc, (byte) 2));
     }

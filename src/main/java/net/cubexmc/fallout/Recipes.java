@@ -19,9 +19,9 @@ import java.util.Arrays;
  *
  * @author David
  */
-public class Recipes {
+class Recipes {
 
-    public Recipes() {
+    Recipes() {
         ItemStack rAStack = new ItemStack(Material.POTION, 1, (short) 8227);
         ItemMeta meta = rAStack.getItemMeta();
         meta.setDisplayName(ChatColor.RED + "Rad Away");

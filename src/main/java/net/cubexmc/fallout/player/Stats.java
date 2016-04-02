@@ -6,7 +6,6 @@
 package net.cubexmc.fallout.player;
 
 import net.cubexmc.fallout.Fallout;
-import net.cubexmc.fallout.player.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

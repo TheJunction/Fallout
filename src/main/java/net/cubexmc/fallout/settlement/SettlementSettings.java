@@ -9,12 +9,14 @@ import com.massivecraft.factions.entity.Faction;
 import net.cubexmc.fallout.Fallout;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -22,9 +24,9 @@ import java.util.UUID;
  *
  * @author David
  */
-class SettlementSettings {
+public class SettlementSettings {
 
-    void load(Faction fac) {
+    public void load(Faction fac) {
         boolean isNew = false;
         if (!Fallout.getInstance().getDataFolder().exists()) {
             if (!Fallout.getInstance().getDataFolder().mkdir()) {
@@ -44,6 +46,16 @@ class SettlementSettings {
         }
         if (!isNew) {
             FileConfiguration con = YamlConfiguration.loadConfiguration(f);
+            ConfigurationSection settlerSec = con.getConfigurationSection("settlers");
+            for (String settlerKey : settlerSec.getKeys(false)) {
+                ConfigurationSection settler = settlerSec.getConfigurationSection(settlerKey);
+                String name = settler.getString("name");
+                Location loc = Location.deserialize((Map<String, Object>) settler.get("loc"));
+                SettlerManager.Occupation occupation = SettlerManager.Occupation.valueOf(settler.getString("occupation"));
+                SettlerManager.Task task = SettlerManager.Task.valueOf(settler.getString("task"));
+                String target = settler.getString("target");
+                Fallout.getInstance().getSettlerManager().addSettler(new Settler(name, loc, occupation, task, target));
+            }
         }
     }
 
